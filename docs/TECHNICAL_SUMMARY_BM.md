@@ -19,14 +19,88 @@ Sistem ini dibina sebagai aplikasi web berasaskan Laravel. Antara fungsi utama i
 
 | Komponen | Teknologi | Fungsi |
 | --- | --- | --- |
-| Backend | Laravel | Mengurus route, model, database, login, dan logik sistem |
+| Bahasa backend | PHP 8.3+ | Bahasa utama untuk menjalankan aplikasi Laravel |
+| Backend framework | Laravel | Mengurus route, model, database, login, dan logik sistem |
 | Admin UI | Filament | Membina panel dashboard dan borang CRUD dengan cepat |
-| Database | Laravel Migrations | Menentukan struktur jadual database |
+| Database local | MySQL | Database untuk pembangunan di komputer sendiri |
+| Database production | MySQL | Database utama untuk server sebenar |
+| Database schema | Laravel Migrations | Menentukan struktur jadual database |
+| Web server production | Ubuntu Linux + Nginx + PHP-FPM | Menjalankan aplikasi Laravel di server pengeluaran |
+| Queue worker | Laravel Queue + Supervisor | Memastikan proses queue berjalan berterusan di server |
+| Scheduler | Laravel Scheduler + Cron | Menjalankan tugasan berjadual secara automatik |
+| SSL | Let's Encrypt / Certbot | Menyediakan HTTPS untuk domain production |
 | Frontend assets | Vite, Tailwind CSS | Membina dan memuatkan CSS/JavaScript |
 | QR Code | `chillerlan/php-qrcode` | Menjana imej QR untuk sticker digital |
 | Testing | PHPUnit | Menjalankan ujian aplikasi |
 
-## 3. Cara Fikir Seni Bina
+## 3. Database dan Server
+
+Projek ini boleh dijalankan dalam dua jenis persekitaran: local development dan production server.
+
+### Local Development
+
+Untuk pembangunan di komputer sendiri, sistem ini menggunakan **MySQL**. MySQL sesuai digunakan kerana persekitaran local akan lebih hampir dengan production server.
+
+Contoh konfigurasi `.env` untuk local development:
+
+```ini
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=vms
+DB_USERNAME=root
+DB_PASSWORD=your_password
+```
+
+### Production Server
+
+Untuk server sebenar, projek ini direka untuk dijalankan di atas stack berikut:
+
+| Komponen Production | Cadangan |
+| --- | --- |
+| Operating system | Ubuntu Linux |
+| Web server | Nginx |
+| PHP runtime | PHP 8.3 dengan PHP-FPM |
+| Database | MySQL |
+| Queue process | Supervisor menjalankan `php artisan queue:work` |
+| Scheduled task | Cron menjalankan `php artisan schedule:run` |
+| HTTPS/SSL | Let's Encrypt melalui Certbot |
+| Public web root | Folder `public` Laravel |
+
+Dalam production, fail `.env` biasanya menggunakan tetapan seperti ini:
+
+```ini
+APP_ENV=production
+APP_DEBUG=false
+APP_URL=https://domain-anda.com
+
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=vms_production
+DB_USERNAME=vms_user
+DB_PASSWORD=kata_laluan_selamat
+
+QUEUE_CONNECTION=database
+SESSION_DRIVER=database
+CACHE_STORE=database
+```
+
+Nginx akan menerima request daripada browser dan menghantar request PHP kepada PHP-FPM. Laravel kemudian memproses request tersebut, membaca atau menulis data ke MySQL, dan memulangkan response kepada pengguna.
+
+Aliran ringkas server production:
+
+```text
+Browser
+-> Nginx
+-> PHP-FPM
+-> Laravel
+-> MySQL
+```
+
+Untuk keselamatan, domain production patut menggunakan HTTPS. Dalam dokumentasi deployment projek, SSL dicadangkan melalui Let's Encrypt dan Certbot.
+
+## 4. Cara Fikir Seni Bina
 
 Sistem ini menggunakan corak biasa Laravel:
 
@@ -39,7 +113,7 @@ Sistem ini menggunakan corak biasa Laravel:
 
 Secara mudah, Laravel bertindak sebagai "otak" sistem, Filament bertindak sebagai "antara muka pengurusan", dan database menyimpan semua rekod.
 
-## 4. Struktur Folder Penting
+## 5. Struktur Folder Penting
 
 | Folder atau Fail | Tujuan |
 | --- | --- |
@@ -54,7 +128,7 @@ Secara mudah, Laravel bertindak sebagai "otak" sistem, Filament bertindak sebaga
 | `resources/css` dan `resources/js` | Asset frontend yang dibina oleh Vite |
 | `docs` | Dokumentasi projek |
 
-## 5. Panel Pengguna
+## 6. Panel Pengguna
 
 Sistem ini mempunyai empat panel utama. Setiap panel mempunyai URL dan peranan yang berbeza.
 
@@ -67,7 +141,7 @@ Sistem ini mempunyai empat panel utama. Setiap panel mempunyai URL dan peranan y
 
 Akses ke panel dikawal dalam model `User`. Setiap pengguna mempunyai `role`, contohnya `admin`, `student`, `guard`, atau `institute_authority`. Jika role pengguna tidak sepadan dengan panel, pengguna tidak boleh masuk ke panel tersebut.
 
-## 6. Model Data Utama
+## 7. Model Data Utama
 
 Model ialah kelas PHP yang mewakili data dalam database. Hubungan model dalam sistem ini adalah seperti berikut:
 
@@ -92,7 +166,7 @@ Guard User
   -> CheckInLog
 ```
 
-## 7. Aliran Pendaftaran Kenderaan
+## 8. Aliran Pendaftaran Kenderaan
 
 Aliran kerja utama sistem:
 
@@ -116,7 +190,7 @@ Status pendaftaran yang digunakan:
 | `approved` | Permohonan telah diluluskan dan sticker boleh dikeluarkan |
 | `rejected` | Permohonan ditolak |
 
-## 8. Reka Bentuk QR Digital Sticker
+## 9. Reka Bentuk QR Digital Sticker
 
 QR code dijana oleh `QRCodeService`. Service ini membuat token unik menggunakan UUID, kemudian menjana imej QR dalam folder storage awam.
 
@@ -143,7 +217,7 @@ Sticker dianggap sah jika:
 
 Jika sticker sudah tamat tempoh atau dibatalkan, sistem akan menganggap akses sebagai tidak sah.
 
-## 9. Aliran Semakan Oleh Pengawal
+## 10. Aliran Semakan Oleh Pengawal
 
 Pengawal menggunakan panel `/guard`. Terdapat dua cara semakan:
 
@@ -161,7 +235,7 @@ Pengawal menggunakan panel `/guard`. Terdapat dua cara semakan:
 
 Setiap semakan yang berjaya dikaitkan dengan kenderaan akan disimpan dalam `CheckInLog`. Log ini menyimpan maklumat seperti pengawal yang membuat semakan, kaedah imbasan, status akses, sebab ditolak, IP scanner, dan masa imbasan.
 
-## 10. Reka Bentuk Keselamatan Asas
+## 11. Reka Bentuk Keselamatan Asas
 
 Sistem ini menggunakan beberapa kawalan asas:
 
@@ -173,7 +247,7 @@ Sistem ini menggunakan beberapa kawalan asas:
 - Status sticker boleh menjadi `valid`, `expired`, atau `revoked`.
 - Rekod semakan disimpan dalam log untuk tujuan audit.
 
-## 11. Data Awal dan Akaun Ujian
+## 12. Data Awal dan Akaun Ujian
 
 Fail `database/seeders/DatabaseSeeder.php` menyediakan data contoh:
 
@@ -186,7 +260,7 @@ Fail `database/seeders/DatabaseSeeder.php` menyediakan data contoh:
 
 Data ini membantu pembangun dan pengguna demo menguji aliran sistem tanpa perlu memasukkan semua data secara manual.
 
-## 12. Ringkasan Reka Bentuk
+## 13. Ringkasan Reka Bentuk
 
 Sistem ini direka secara modular. Setiap bahagian mempunyai tanggungjawab yang jelas:
 
