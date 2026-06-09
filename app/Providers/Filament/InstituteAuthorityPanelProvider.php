@@ -29,7 +29,7 @@ class InstituteAuthorityPanelProvider extends PanelProvider
             ->colors([
                 'primary' => Color::Purple,
             ])
-            ->brandName('VMS - Institute Authority')
+            ->brandName('e-Daftar Kenderaan - Institute Authority')
             ->discoverResources(in: app_path('Filament/Authority/Resources'), for: 'App\Filament\Authority\Resources')
             ->discoverPages(in: app_path('Filament/Authority/Pages'), for: 'App\Filament\Authority\Pages')
             ->pages([

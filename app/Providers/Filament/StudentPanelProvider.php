@@ -33,7 +33,7 @@ class StudentPanelProvider extends PanelProvider
             ->colors([
                 'primary' => Color::Green,
             ])
-            ->brandName('VMS - Student Portal')
+            ->brandName('e-Daftar Kenderaan - Student Portal')
             ->discoverResources(in: app_path('Filament/Student/Resources'), for: 'App\Filament\Student\Resources')
             ->discoverPages(in: app_path('Filament/Student/Pages'), for: 'App\Filament\Student\Pages')
             ->pages([

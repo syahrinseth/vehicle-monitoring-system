@@ -30,7 +30,7 @@ class GuardPanelProvider extends PanelProvider
             ->colors([
                 'primary' => Color::Orange,
             ])
-            ->brandName('VMS - Guard Station')
+            ->brandName('e-Daftar Kenderaan - Guard Station')
             ->discoverResources(in: app_path('Filament/Guard/Resources'), for: 'App\Filament\Guard\Resources')
             ->discoverPages(in: app_path('Filament/Guard/Pages'), for: 'App\Filament\Guard\Pages')
             ->pages([
