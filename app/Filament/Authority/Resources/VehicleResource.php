@@ -1,17 +1,11 @@
 <?php
 
-namespace App\Filament\Admin\Resources;
+namespace App\Filament\Authority\Resources;
 
-use App\Filament\Admin\Resources\VehicleResource\Pages;
+use App\Filament\Authority\Resources\VehicleResource\Pages;
 use App\Models\Vehicle;
-use App\Models\VehicleType;
 use Filament\Actions\Action;
-use Filament\Actions\DeleteAction;
-use Filament\Actions\EditAction;
-use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
@@ -23,6 +17,8 @@ use Illuminate\Support\Facades\Auth;
 class VehicleResource extends Resource
 {
     protected static ?string $model = Vehicle::class;
+
+    protected static ?string $navigationLabel = 'Vehicle Reviews';
 
     protected static ?int $navigationSort = 2;
 
@@ -36,39 +32,14 @@ class VehicleResource extends Resource
         return 'Vehicle Management';
     }
 
+    public static function canCreate(): bool
+    {
+        return false;
+    }
+
     public static function form(Schema $schema): Schema
     {
-        return $schema->schema([
-            Select::make('student_id')
-                ->relationship('student', 'matric_number')
-                ->searchable()
-                ->preload()
-                ->required(),
-
-            Select::make('vehicle_type_id')
-                ->label('Vehicle Type')
-                ->options(VehicleType::active()->pluck('name', 'id'))
-                ->required(),
-
-            TextInput::make('registration_number')
-                ->label('Plate Number')
-                ->required()
-                ->unique(ignoreRecord: true)
-                ->maxLength(20)
-                ->extraInputAttributes(['class' => 'uppercase'])
-                ->dehydrateStateUsing(fn ($state) => strtoupper($state)),
-
-            TextInput::make('model')->required()->maxLength(100),
-            TextInput::make('color')->required()->maxLength(50),
-
-            FileUpload::make('payment_receipt_path')
-                ->label('Payment Receipt')
-                ->disk('public')
-                ->directory('receipts')
-                ->acceptedFileTypes(['image/jpeg', 'image/png', 'application/pdf'])
-                ->maxSize(5120)
-                ->required(fn (string $operation): bool => $operation === 'create'),
-        ]);
+        return $schema->schema([]);
     }
 
     public static function table(Table $table): Table
@@ -80,11 +51,6 @@ class VehicleResource extends Resource
                     ->searchable()
                     ->sortable()
                     ->weight('bold'),
-                TextColumn::make('vehicleType.name')
-                    ->label('Type')
-                    ->badge(),
-                TextColumn::make('model')->searchable(),
-                TextColumn::make('color'),
                 TextColumn::make('student.matric_number')
                     ->label('Matric No.')
                     ->searchable(),
@@ -112,15 +78,9 @@ class VehicleResource extends Resource
                 TextColumn::make('reviewed_at')
                     ->dateTime()
                     ->toggleable(),
-                TextColumn::make('registrations_count')
-                    ->counts('registrations')
-                    ->label('Registrations'),
                 TextColumn::make('created_at')->dateTime()->sortable()->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                SelectFilter::make('vehicle_type_id')
-                    ->label('Vehicle Type')
-                    ->relationship('vehicleType', 'name'),
                 SelectFilter::make('review_status')
                     ->label('Review Status')
                     ->options([
@@ -130,8 +90,6 @@ class VehicleResource extends Resource
                     ]),
             ])
             ->actions([
-                EditAction::make(),
-                DeleteAction::make(),
                 Action::make('approve')
                     ->label('Approve')
                     ->icon('heroicon-o-check-circle')
@@ -174,8 +132,6 @@ class VehicleResource extends Resource
     {
         return [
             'index' => Pages\ListVehicles::route('/'),
-            'create' => Pages\CreateVehicle::route('/create'),
-            'edit' => Pages\EditVehicle::route('/{record}/edit'),
         ];
     }
 }

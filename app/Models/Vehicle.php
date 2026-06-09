@@ -14,12 +14,16 @@ class Vehicle extends Model
         'vehicle_type_id',
         'registration_number',
         'color',
-        'manufacturer',
         'model',
-        'year',
-        'engine_number',
-        'chassis_number',
-        'registration_document_path',
+        'payment_receipt_path',
+        'review_status',
+        'reviewed_by',
+        'reviewed_at',
+        'rejection_reason',
+    ];
+
+    protected $casts = [
+        'reviewed_at' => 'datetime',
     ];
 
     public function student()
@@ -45,6 +49,21 @@ class Vehicle extends Model
     public function checkInLogs()
     {
         return $this->hasMany(CheckInLog::class);
+    }
+
+    public function reviewedBy()
+    {
+        return $this->belongsTo(User::class, 'reviewed_by');
+    }
+
+    public function isApproved(): bool
+    {
+        return $this->review_status === 'approved';
+    }
+
+    public function isPendingReview(): bool
+    {
+        return $this->review_status === 'pending';
     }
 
     public function latestSticker()

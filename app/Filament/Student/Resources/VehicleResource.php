@@ -15,6 +15,7 @@ use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Auth;
 
 class VehicleResource extends Resource
 {
@@ -44,19 +45,15 @@ class VehicleResource extends Resource
                 ->placeholder('e.g. ABC 1234'),
 
             TextInput::make('color')->required(),
-            TextInput::make('manufacturer')->required()->label('Brand'),
             TextInput::make('model')->required(),
-            TextInput::make('year')->numeric()->minValue(1990)->maxValue(date('Y') + 1),
-            TextInput::make('engine_number')->nullable(),
-            TextInput::make('chassis_number')->nullable(),
 
-            FileUpload::make('registration_document_path')
-                ->label('Vehicle Registration Document (Grant/Geran)')
+            FileUpload::make('payment_receipt_path')
+                ->label('Payment Receipt')
                 ->disk('public')
-                ->directory('documents')
+                ->directory('receipts')
                 ->acceptedFileTypes(['image/jpeg', 'image/png', 'application/pdf'])
                 ->maxSize(5120)
-                ->nullable(),
+                ->required(fn (string $operation): bool => $operation === 'create'),
         ]);
     }
 
@@ -67,12 +64,18 @@ class VehicleResource extends Resource
                 TextColumn::make('registration_number')->label('Plate No.')->searchable()->sortable(),
                 TextColumn::make('vehicleType.name')->label('Type'),
                 TextColumn::make('color'),
-                TextColumn::make('manufacturer')->label('Brand'),
                 TextColumn::make('model'),
-                TextColumn::make('year'),
+                TextColumn::make('review_status')
+                    ->badge()
+                    ->label('Review')
+                    ->color(fn (?string $state): string => match ($state) {
+                        'approved' => 'success',
+                        'rejected' => 'danger',
+                        default => 'warning',
+                    }),
             ])
             ->modifyQueryUsing(function (Builder $query) {
-                $student = auth()->user()->student;
+                $student = Auth::user()?->student;
 
                 return $student
                     ? $query->where('student_id', $student->id)

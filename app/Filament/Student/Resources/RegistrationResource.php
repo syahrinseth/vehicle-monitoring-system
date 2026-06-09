@@ -13,7 +13,7 @@ use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth;
 
 class RegistrationResource extends Resource
 {
@@ -32,10 +32,12 @@ class RegistrationResource extends Resource
             Select::make('vehicle_id')
                 ->label('Select Vehicle')
                 ->options(function () {
-                    $student = auth()->user()->student;
+                    $student = Auth::user()?->student;
 
                     return $student
-                        ? Vehicle::where('student_id', $student->id)->pluck('registration_number', 'id')
+                        ? Vehicle::where('student_id', $student->id)
+                            ->where('review_status', 'approved')
+                            ->pluck('registration_number', 'id')
                         : [];
                 })
                 ->required(),
@@ -72,7 +74,7 @@ class RegistrationResource extends Resource
                 TextColumn::make('submitted_at')->dateTime()->sortable(),
             ])
             ->modifyQueryUsing(function (Builder $query) {
-                $student = auth()->user()->student;
+                $student = Auth::user()?->student;
 
                 return $student
                     ? $query->where('student_id', $student->id)
@@ -96,7 +98,7 @@ class RegistrationResource extends Resource
                         $record->digitalSticker->update(['downloaded_at' => now()]);
                     })
                     ->url(fn (Registration $record) => $record->digitalSticker?->qr_code_image_path
-                        ? Storage::disk('public')->url($record->digitalSticker->qr_code_image_path)
+                        ? asset('storage/'.$record->digitalSticker->qr_code_image_path)
                         : null)
                     ->openUrlInNewTab(),
 

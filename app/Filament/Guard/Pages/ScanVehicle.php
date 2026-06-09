@@ -12,6 +12,7 @@ use Filament\Forms\Contracts\HasForms;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Schemas\Schema;
+use Illuminate\Support\Facades\Auth;
 
 class ScanVehicle extends Page implements HasForms
 {
@@ -151,7 +152,6 @@ class ScanVehicle extends Page implements HasForms
             'plate' => $vehicle->registration_number,
             'type' => $vehicle->vehicleType->name ?? 'N/A',
             'color' => $vehicle->color,
-            'manufacturer' => $vehicle->manufacturer,
             'model' => $vehicle->model,
             'student_name' => $vehicle->student->user->name ?? 'N/A',
             'matric' => $vehicle->student->matric_number ?? 'N/A',
@@ -166,7 +166,7 @@ class ScanVehicle extends Page implements HasForms
             CheckInLog::create([
                 'vehicle_id' => $vehicleId,
                 'digital_sticker_id' => $stickerId,
-                'guard_id' => auth()->id(),
+                'guard_id' => Auth::id(),
                 'scan_method' => $method,
                 'access_granted' => $granted,
                 'denial_reason' => $reason,

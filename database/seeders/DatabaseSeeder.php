@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Models\DigitalSticker;
 use App\Models\Registration;
 use App\Models\Student;
 use App\Models\User;
@@ -29,67 +28,73 @@ class DatabaseSeeder extends Seeder
 
         // ── Admin ──────────────────────────────────────────────────
         User::firstOrCreate(['email' => 'admin@vms.test'], [
-            'name'     => 'System Admin',
+            'name' => 'System Admin',
             'password' => Hash::make('password'),
-            'role'     => 'admin',
-            'phone'    => '0111234567',
+            'role' => 'admin',
+            'phone' => '0111234567',
             'is_active' => true,
         ]);
 
         // ── Institute Authority ───────────────────────────────────
         User::firstOrCreate(['email' => 'authority@vms.test'], [
-            'name'     => 'Prof. Dr. Ahmad',
+            'name' => 'Prof. Dr. Ahmad',
             'password' => Hash::make('password'),
-            'role'     => 'institute_authority',
-            'phone'    => '0129876543',
+            'role' => 'institute_authority',
+            'phone' => '0129876543',
             'is_active' => true,
         ]);
 
         // ── Guards ────────────────────────────────────────────────
         $guard = User::firstOrCreate(['email' => 'guard@vms.test'], [
-            'name'     => 'Guard Hassan',
+            'name' => 'Guard Hassan',
             'password' => Hash::make('password'),
-            'role'     => 'guard',
-            'phone'    => '0133456789',
+            'role' => 'guard',
+            'phone' => '0133456789',
             'is_active' => true,
         ]);
 
         // ── Student 1 (Approved with valid sticker) ───────────────
         $studentUser1 = User::firstOrCreate(['email' => 'student1@vms.test'], [
-            'name'     => 'Ali bin Abu',
+            'name' => 'Ali bin Abu',
             'password' => Hash::make('password'),
-            'role'     => 'student',
-            'phone'    => '0174567890',
+            'role' => 'student',
+            'phone' => '0174567890',
             'is_active' => true,
         ]);
 
         $student1 = Student::firstOrCreate(['user_id' => $studentUser1->id], [
-            'matric_number'    => 'CS2024001',
-            'phone'            => '0174567890',
-            'gender'           => 'male',
-            'ic_number'        => '020101123456',
-            'address'          => 'Blok A, Asrama Bunga Raya',
+            'matric_number' => 'CS2024001',
+            'phone' => '0174567890',
+            'gender' => 'male',
+            'ic_number' => '020101123456',
+            'address' => 'Blok A, Asrama Bunga Raya',
             'emergency_contact' => '0112345678',
         ]);
 
         $vehicle1 = Vehicle::firstOrCreate(['registration_number' => 'WXY 1234'], [
-            'student_id'      => $student1->id,
+            'student_id' => $student1->id,
             'vehicle_type_id' => VehicleType::where('code', 'MOTO')->first()->id,
-            'color'           => 'Black',
-            'manufacturer'    => 'Honda',
-            'model'           => 'EX5',
-            'year'            => 2022,
+            'color' => 'Black',
+            'model' => 'EX5',
+            'payment_receipt_path' => 'receipts/demo-receipt-1.pdf',
         ]);
+
+        $vehicle1->forceFill([
+            'review_status' => 'approved',
+            'reviewed_by' => User::where('role', 'admin')->first()->id,
+            'reviewed_at' => now()->subDays(9),
+            'rejection_reason' => null,
+        ])->save();
 
         $reg1 = Registration::firstOrCreate(
             ['student_id' => $student1->id, 'vehicle_id' => $vehicle1->id, 'status' => 'approved'],
             [
-                'status'       => 'approved',
+                'status' => 'approved',
                 'submitted_at' => now()->subDays(10),
-                'verified_by'  => User::where('role', 'admin')->first()->id,
-                'verified_at'  => now()->subDays(8),
-                'approved_by'  => User::where('role', 'institute_authority')->first()->id,
-                'approved_at'  => now()->subDays(7),
+                'verified_by' => User::where('role', 'admin')->first()->id,
+                'verified_at' => now()->subDays(8),
+                'approved_by' => User::where('role', 'institute_authority')->first()->id,
+                'approved_at' => now()->subDays(7),
             ]
         );
 
@@ -103,35 +108,41 @@ class DatabaseSeeder extends Seeder
 
         // ── Student 2 (Pending registration) ─────────────────────
         $studentUser2 = User::firstOrCreate(['email' => 'student2@vms.test'], [
-            'name'     => 'Siti binti Rahman',
+            'name' => 'Siti binti Rahman',
             'password' => Hash::make('password'),
-            'role'     => 'student',
-            'phone'    => '0185678901',
+            'role' => 'student',
+            'phone' => '0185678901',
             'is_active' => true,
         ]);
 
         $student2 = Student::firstOrCreate(['user_id' => $studentUser2->id], [
-            'matric_number'    => 'CS2024002',
-            'phone'            => '0185678901',
-            'gender'           => 'female',
-            'ic_number'        => '030202654321',
-            'address'          => 'Blok B, Asrama Anggerik',
+            'matric_number' => 'CS2024002',
+            'phone' => '0185678901',
+            'gender' => 'female',
+            'ic_number' => '030202654321',
+            'address' => 'Blok B, Asrama Anggerik',
             'emergency_contact' => '0198765432',
         ]);
 
         $vehicle2 = Vehicle::firstOrCreate(['registration_number' => 'PQR 5678'], [
-            'student_id'      => $student2->id,
+            'student_id' => $student2->id,
             'vehicle_type_id' => VehicleType::where('code', 'CAR')->first()->id,
-            'color'           => 'White',
-            'manufacturer'    => 'Perodua',
-            'model'           => 'Myvi',
-            'year'            => 2021,
+            'color' => 'White',
+            'model' => 'Myvi',
+            'payment_receipt_path' => 'receipts/demo-receipt-2.pdf',
         ]);
+
+        $vehicle2->forceFill([
+            'review_status' => 'pending',
+            'reviewed_by' => null,
+            'reviewed_at' => null,
+            'rejection_reason' => null,
+        ])->save();
 
         Registration::firstOrCreate(
             ['student_id' => $student2->id, 'vehicle_id' => $vehicle2->id],
             [
-                'status'       => 'pending',
+                'status' => 'pending',
                 'submitted_at' => now()->subDay(),
             ]
         );

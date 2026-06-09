@@ -104,7 +104,7 @@
                     </div>
 
                     <div class="w-full space-y-1.5 text-sm text-center text-gray-600 dark:text-gray-400">
-                        <p class="font-semibold text-gray-900 dark:text-white">{{ $vehicleResult['manufacturer'] }} {{ $vehicleResult['model'] }}</p>
+                        <p class="font-semibold text-gray-900 dark:text-white">{{ $vehicleResult['model'] }}</p>
                         <p>{{ $vehicleResult['color'] }} &middot; {{ $vehicleResult['type'] }}</p>
                     </div>
                 </div>
