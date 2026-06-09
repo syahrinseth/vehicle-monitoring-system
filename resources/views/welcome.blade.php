@@ -56,11 +56,16 @@
                 <section class="grid gap-8 lg:grid-cols-[1.15fr_0.85fr] lg:items-start">
                     <div class="rounded-[2rem] border border-white/10 bg-white/8 p-7 shadow-2xl shadow-slate-950/30 backdrop-blur md:p-10">
                         <div class="flex flex-col gap-6 sm:flex-row sm:items-center">
-                            <div class="self-start">
+                            <div class="flex shrink-0 flex-col items-center gap-3 self-start">
                                 <img
                                     src="{{ asset('images/jata-negara-ai-01-cf49d576.png') }}"
                                     alt="Jata Negara"
-                                    class="block h-full w-full object-contain"
+                                    class="block h-20 w-auto object-contain sm:h-24"
+                                >
+                                <img
+                                    src="{{ asset('images/college_logo.jpeg') }}"
+                                    alt="College Logo"
+                                    class="block h-12 w-auto max-w-[260px] object-contain sm:h-14 sm:max-w-[320px]"
                                 >
                             </div>
 
