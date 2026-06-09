@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Student\Pages\Register as StudentRegister;
 use App\Filament\Student\Widgets\StudentScanChart;
 use App\Filament\Student\Widgets\StudentStatsOverview;
 use Filament\Http\Middleware\Authenticate;
@@ -28,7 +29,7 @@ class StudentPanelProvider extends PanelProvider
             ->id('student')
             ->path('student')
             ->login()
-            ->registration()
+            ->registration(StudentRegister::class)
             ->colors([
                 'primary' => Color::Green,
             ])

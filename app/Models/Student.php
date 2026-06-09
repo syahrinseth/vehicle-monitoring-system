@@ -18,10 +18,13 @@ class Student extends Model
         'address',
         'emergency_contact',
         'ic_number',
+        'no_ndp',
+        'kos_bengkel',
     ];
 
     protected $casts = [
         'date_of_birth' => 'date',
+        'kos_bengkel' => 'decimal:2',
     ];
 
     public function user()

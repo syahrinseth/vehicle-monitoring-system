@@ -7,6 +7,8 @@ use App\Models\Registration;
 use App\Models\Vehicle;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
@@ -29,6 +31,34 @@ class RegistrationResource extends Resource
     public static function form(Schema $schema): Schema
     {
         return $schema->schema([
+            TextInput::make('student_name')
+                ->label('Nama')
+                ->default(fn () => Auth::user()?->name)
+                ->required(),
+
+            TextInput::make('ic_number')
+                ->label('IC no')
+                ->default(fn () => Auth::user()?->student?->ic_number)
+                ->required(),
+
+            TextInput::make('no_ndp')
+                ->label('no NDP')
+                ->default(fn () => Auth::user()?->student?->no_ndp)
+                ->required(),
+
+            TextInput::make('kos_bengkel')
+                ->label('Kos bengkel')
+                ->default(fn () => Auth::user()?->student?->kos_bengkel)
+                ->numeric()
+                ->prefix('RM')
+                ->required(),
+
+            Textarea::make('address')
+                ->label('Alamat pelajar')
+                ->default(fn () => Auth::user()?->student?->address)
+                ->rows(4)
+                ->required(),
+
             Select::make('vehicle_id')
                 ->label('Select Vehicle')
                 ->options(function () {

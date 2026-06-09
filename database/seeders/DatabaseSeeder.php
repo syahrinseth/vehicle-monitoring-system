@@ -67,6 +67,8 @@ class DatabaseSeeder extends Seeder
             'phone' => '0174567890',
             'gender' => 'male',
             'ic_number' => '020101123456',
+            'no_ndp' => 'NDP2024001',
+            'kos_bengkel' => 150.00,
             'address' => 'Blok A, Asrama Bunga Raya',
             'emergency_contact' => '0112345678',
         ]);
@@ -120,6 +122,8 @@ class DatabaseSeeder extends Seeder
             'phone' => '0185678901',
             'gender' => 'female',
             'ic_number' => '030202654321',
+            'no_ndp' => 'NDP2024002',
+            'kos_bengkel' => 150.00,
             'address' => 'Blok B, Asrama Anggerik',
             'emergency_contact' => '0198765432',
         ]);
