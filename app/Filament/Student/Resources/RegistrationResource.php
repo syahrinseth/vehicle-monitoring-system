@@ -4,6 +4,7 @@ namespace App\Filament\Student\Resources;
 
 use App\Filament\Student\Resources\RegistrationResource\Pages;
 use App\Models\Registration;
+use App\Models\Student;
 use App\Models\Vehicle;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
@@ -46,11 +47,10 @@ class RegistrationResource extends Resource
                 ->default(fn () => Auth::user()?->student?->no_ndp)
                 ->required(),
 
-            TextInput::make('kos_bengkel')
+            Select::make('kos_bengkel')
                 ->label('Kos bengkel')
                 ->default(fn () => Auth::user()?->student?->kos_bengkel)
-                ->numeric()
-                ->prefix('RM')
+                ->options(Student::KOS_BENGKEL_OPTIONS)
                 ->required(),
 
             Textarea::make('address')

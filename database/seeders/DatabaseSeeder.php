@@ -68,7 +68,7 @@ class DatabaseSeeder extends Seeder
             'gender' => 'male',
             'ic_number' => '020101123456',
             'no_ndp' => 'NDP2024001',
-            'kos_bengkel' => 150.00,
+            'kos_bengkel' => 'DIPLOMA KOMPUTER SISTEM',
             'address' => 'Blok A, Asrama Bunga Raya',
             'emergency_contact' => '0112345678',
         ]);
@@ -123,7 +123,7 @@ class DatabaseSeeder extends Seeder
             'gender' => 'female',
             'ic_number' => '030202654321',
             'no_ndp' => 'NDP2024002',
-            'kos_bengkel' => 150.00,
+            'kos_bengkel' => 'DIPLOMA TELEKOMUNIKASI',
             'address' => 'Blok B, Asrama Anggerik',
             'emergency_contact' => '0198765432',
         ]);

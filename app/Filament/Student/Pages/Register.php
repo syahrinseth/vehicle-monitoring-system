@@ -5,6 +5,7 @@ namespace App\Filament\Student\Pages;
 use App\Models\Student;
 use App\Models\User;
 use Filament\Auth\Pages\Register as BaseRegister;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Component;
@@ -72,10 +73,9 @@ class Register extends BaseRegister
 
     protected function getKosBengkelFormComponent(): Component
     {
-        return TextInput::make('kos_bengkel')
+        return Select::make('kos_bengkel')
             ->label('Kos bengkel')
-            ->numeric()
-            ->prefix('RM')
+            ->options(Student::KOS_BENGKEL_OPTIONS)
             ->required();
     }
 

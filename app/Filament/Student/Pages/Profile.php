@@ -2,7 +2,9 @@
 
 namespace App\Filament\Student\Pages;
 
+use App\Models\Student;
 use App\Models\User;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
@@ -53,12 +55,12 @@ class Profile extends Page
 
             TextInput::make('no_ndp')
                 ->label('no NDP')
+                ->maxLength(50)
                 ->required(),
 
-            TextInput::make('kos_bengkel')
+            Select::make('kos_bengkel')
                 ->label('Kos bengkel')
-                ->numeric()
-                ->prefix('RM')
+                ->options(Student::KOS_BENGKEL_OPTIONS)
                 ->required(),
 
             Textarea::make('address')

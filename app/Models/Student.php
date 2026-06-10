@@ -9,6 +9,13 @@ class Student extends Model
 {
     use HasFactory;
 
+    public const KOS_BENGKEL_OPTIONS = [
+        'DIPLOMA KOMPUTER SISTEM' => 'DIPLOMA KOMPUTER SISTEM',
+        'DIPLOMA TELEKOMUNIKASI' => 'DIPLOMA TELEKOMUNIKASI',
+        'BENGKEL AUTOMOTIF' => 'BENGKEL AUTOMOTIF',
+        'BENGKEL PEMBUATAN' => 'BENGKEL PEMBUATAN',
+    ];
+
     protected $fillable = [
         'user_id',
         'matric_number',
@@ -24,7 +31,6 @@ class Student extends Model
 
     protected $casts = [
         'date_of_birth' => 'date',
-        'kos_bengkel' => 'decimal:2',
     ];
 
     public function user()
